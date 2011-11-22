@@ -12,10 +12,10 @@ f.correct <- function(x){
   else x
 }
 
-f.Exp <- function(map, p.trans){
+f.Exp <- function(map, base.map p.trans){
               mat.0 <- as.matrix(map)
                map.t <- focal(map, w=3, sum, na.rm=T, pad=T) 
-              map.t <- map.t + map
+              map.t <- map.t + base.map
                 mat.t <- as.matrix(map.t) 
                 mat.prob <- apply(mat.t, c(1,2), f.prob, p.trans=p.trans)
                mat.cor <- mat.0 + mat.prob
