@@ -17,16 +17,18 @@ f.correct <- function(x){
   else x
 }
 
-f.Exp <- function(map, p.trans){
+### Needs fixing, currently changes NAs
+
+f.Exp <- function(map, base.map, p.trans){
               mat.0 <- as.matrix(map)
-              map.t <- focal(map, w=3, sum, na.rm=T, pad=T) 
-              map.t <- map.t + map
-              mat.t <- as.matrix(map.t) 
-              mat.prob <- apply(mat.t, c(1,2), f.prob, p.trans=p.trans)
-              mat.cor <- mat.0 + mat.prob
+               map.t <- focal(map, w=3, sum, na.rm=T, pad=T) 
+              map.t <- map.t + base.map
+                mat.t <- as.matrix(map.t) 
+                mat.prob <- apply(mat.t, c(1,2), f.prob, p.trans=p.trans)
+               mat.cor <- mat.0 + mat.prob
               mat.cor <- apply(mat.cor, c(1,2), f.correct)
-              mat.new <- apply(mat.cor, c(1,2), f.bin)
-              map.new <- raster(mat.new, xmn=xmin(map), xmx=xmax(map), ymn=ymin(map), ymx=ymax(map), crs=paste(projection(map)))
+               mat.new <- apply(mat.cor, c(1,2), f.bin)
+               map.new <- raster(mat.new, xmn=xmin(map), xmx=xmax(map), ymn=ymin(map), ymx=ymax(map), crs=paste(projection(map)))
 }
 
 # Model of black grouse habitat suitability in 1994
@@ -53,10 +55,13 @@ potential.pts <- potential.0 + potential.pts
 projection(potential.pts) <- BNG
 rm(potential)
 
+## Iterative forest growth. Need percentage value to stop.
+
 iterations <- 50
 p.trans <- 0.25
-for(i in 1:50){
-	if(cellStats(new.hab, sum) <= VALUE) new.hab <- f.Exp(new.hab, p.trans)
+new.hab <- f.Env(potential.pts, potential.pts, p.trans)
+for(i in 1:iterations){
+	if(cellStats(new.hab, sum) <= 15324.9) new.hab <- f.Exp(new.hab, potential.pts  p.trans)
 	else newhab <- new.hab
 }
 
