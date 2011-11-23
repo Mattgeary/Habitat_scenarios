@@ -1,6 +1,6 @@
 f.prob <- function(x, p.trans){
-+          x*p.trans
-+ }
+          x*p.trans
+ }
 
 f.bin <- function(x){
     if(!is.na(x)) x <- rbinom(1,1,x)
@@ -12,7 +12,9 @@ f.correct <- function(x){
   else x
 }
 
-f.Exp <- function(map, base.map p.trans){
+### Need to fix, currently changing NAs
+
+f.Exp <- function(map, base.map, p.trans){
               mat.0 <- as.matrix(map)
                map.t <- focal(map, w=3, sum, na.rm=T, pad=T) 
               map.t <- map.t + base.map
