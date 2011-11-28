@@ -26,3 +26,14 @@ f.Exp <- function(map, base.map, p.trans){
                map.new <- raster(mat.new, xmn=xmin(map), xmx=xmax(map), ymn=ymin(map), ymx=ymax(map), crs=paste(projection(map)))
 }
 
+f.Exp.5 <- function(map, base.map, p.trans){
+              mat.0 <- as.matrix(map)
+               map.t <- focal(map, w=5, sum, na.rm=T, pad=T) 
+              map.t <- map.t + base.map
+                mat.t <- as.matrix(map.t) 
+                mat.prob <- apply(mat.t, c(1,2), f.prob, p.trans=p.trans)
+               mat.cor <- mat.0 + mat.prob
+              mat.cor <- apply(mat.cor, c(1,2), f.correct)
+               mat.new <- apply(mat.cor, c(1,2), f.bin)
+               map.new <- raster(mat.new, xmn=xmin(map), xmx=xmax(map), ymn=ymin(map), ymx=ymax(map), crs=paste(projection(map)))
+}
