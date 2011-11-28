@@ -1,11 +1,13 @@
 library(raster)
 library(dismo)
+work <- getwd()
+output.6 <- paste(getwd(), "Scenario_6", sep="/")
 
 BNG <- CRS("+init=epsg:27700")
 
 f.prob <- function(x, p.trans){
-+          x*p.trans
-+ }
+          x*p.trans
+ }
 
 f.bin <- function(x){
     if(!is.na(x)) x <- rbinom(1,1,x)
@@ -35,11 +37,11 @@ f.Exp <- function(map, base.map, p.trans){
 
 BK.pres <- read.csv("BK_pres.csv")
 
-env.l.base <- stack(raster(paste(getwd(), "Env_94/hab_1.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_2.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_3.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_4.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_5.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_6.asc", sep="/"), proj4string=BNG), raster("studyareadem.asc", proj4string=BNG))
+env.l.base <- stack(raster(paste(getwd(), "Proportion/hab_1.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_2.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_3.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_4.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_5.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_6.asc", sep="/"), proj4string=BNG), raster("studyareadem.asc", proj4string=BNG))
 
 max_base <- maxent(env.l.base, BK.pres, args=c("replicates=10", "replicatetype=crossvalidate", "outputgrids=FALSE"))
 
-base.map <- predict(max_base, env.l.base
+base.map <- predict(max_base, env.l.base)
 
 # Read in potential area layer
 
@@ -48,7 +50,7 @@ potential <- raster(paste(getwd(), "Potential/Scenario_6.asc", sep="/"),  proj4s
 rcl <- matrix(c(0.8,1.2,0), nrow=1, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
-rnd.pts <- randomPoints(potential, 50)
+rnd.pts <- randomPoints(potential, 10)
 rnd.pts <- as.data.frame(rnd.pts)
 potential.pts <- rasterize(rnd.pts, potential, background=0)
 potential.pts <- potential.0 + potential.pts
@@ -61,16 +63,42 @@ iterations <- 50
 p.trans <- 0.25
 new.hab <- f.Env(potential.pts, potential.pts, p.trans)
 for(i in 1:iterations){
-	if(cellStats(new.hab, sum) <= 15324.9) new.hab <- f.Exp(new.hab, potential.pts  p.trans)
-	else newhab <- new.hab
+	if(cellStats(new.hab, sum) <= 1848731) new.hab <- f.Exp(new.hab, potential.pts, p.trans)
+	else new.hab <- new.hab
 }
 
-######
-# Need to create proportional habitat data
-#
-# May need to alter so that scenarios can be set up independently
-#
-######
+hab.3 <- raster(paste(getwd(), "Binary/hab_3.asc", sep="/"))
+hab.3 <- hab.3 - new.hab
+projection(hab.3) <- BNG
+hab.3 <- focal(hab.3, w=93, sum, na.rm=T, pad=T)
+setwd(output.6)
+writeRaster(hab.3, "hab_3.asc")
+rm(hab.3)
+setwd(work)
 
-env.l.new <- stack(raster(paste(getwd(), "Env_94/hab_1.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_2.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "scot_test/hab_3.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "scot_test/hab_4.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "scot_test/hab_5.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Env_94/hab_6.asc", sep="/"), proj4string=BNG), raster("studyareadem.asc", proj4string=BNG))
+hab.4 <- raster(paste(getwd(), "Binary/hab_4.asc", sep="/"))
+hab.4 <- hab.4 - new.hab
+projection(hab.4) <- BNG
+hab.4 <- focal(hab.4, w=93, sum, na.rm=T, pad=T)
+setwd(output.6)
+writeRaster(hab.4, "hab_4.asc")
+rm(hab.4)
+setwd(work)
 
+hab.5 <- raster(paste(getwd(), "Binary", sep="/"))
+hab.3 <- hab.5 + new.hab
+projection(hab.5) <- BNG
+hab.3 <- focal(hab.5, w=93, sum, na.rm=T, pad=T)
+setwd(output.6)
+writeRaster(hab.3, "hab_4.asc")
+rm(hab.5)
+setwd(work)
+
+env.l.new <- stack(raster(paste(getwd(), "Proportion/hab_1.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_2.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Scenario_6/hab_3.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Scenario_6/hab_4.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Scenario_6/hab_5.asc", sep="/"), proj4string=BNG), raster(paste(getwd(), "Proportion/hab_6.asc", sep="/"), proj4string=BNG), raster("studyareadem.asc", proj4string=BNG))
+
+pred <- predict(max_base, env.l.new)
+
+ind <- rep(1, 10)
+
+pred <- stackApply(pred, ind, mean, na.rm=T)
+writeRaster(pred, "Pred_MaxEnt.asc")
