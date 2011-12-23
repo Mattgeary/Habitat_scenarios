@@ -1,0 +1,27 @@
+[general] 
+creator=R package 'raster' 
+created= 2011-12-02 15:17:01 
+[georeference] 
+nrows= 1212 
+ncols= 1538 
+xmin= 268220.7250193 
+ymin= 743137.81817112 
+xmax= 312053.7250193 
+ymax= 777679.81817112 
+projection= NA 
+[data] 
+datatype= FLT4S 
+byteorder= little 
+nbands= 6 
+bandorder= BIL 
+categorical= FALSE 
+minvalue= 0:0.000260196509771049:0.029042050242424:0:0:0 
+maxvalue= 0.450307607650757:0.746373474597931:0.990502774715424:0.629220128059387:0.696676015853882:0.411370396614075 
+nodatavalue= -3.4e+38 
+[legend] 
+legendtype=  
+values=  
+color=  
+[description] 
+layername= hab_1:hab_2:hab_3:hab_4:hab_5:hab_6 
+history=  
