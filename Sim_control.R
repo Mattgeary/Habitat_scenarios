@@ -5,7 +5,7 @@ work <- getwd()
 
 BNG <- CRS("+init=epsg:27700")
 
-models <- 10
+models <- 30
 iterations <- 50
 p.trans <- 0.25
 n.points <- 20

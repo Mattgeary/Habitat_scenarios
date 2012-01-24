@@ -7,7 +7,7 @@ for(j in 1:models){
 
 potential <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"),  proj4string="BNG")
 
-rcl <- matrix(c(0.8,1.2,0), nrow=1, ncol=3, byrow=T)
+rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
 rnd.pts <- randomPoints(potential, 10)
@@ -27,7 +27,7 @@ for(i in 1:iterations){
 
 potential <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"),  proj4string="BNG")
 
-rcl <- matrix(c(0.8,1.2,0), nrow=1, ncol=3, byrow=T)
+rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
 rnd.pts <- randomPoints(potential, 10)
@@ -49,8 +49,10 @@ dir.create(paste(getwd(), "/Scenario_1/run_", j, sep=""))
 
 hab.3 <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"))
 hab.3 <- hab.3 + new.hab.1
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+hab.3 <- reclass(hab.3, rcl.na)
 projection(hab.3) <- BNG
-hab.3 <- focal(hab.3, w=93, sum, na.rm=T, pad=T)
+hab.3 <- focal(hab.3, w=93, mean, na.rm=T, pad=T)
 setwd(output.1)
 writeRaster(hab.3, paste(paste(getwd(), "/run_", j, sep=""), "/hab_3.asc", sep=""), overwrite=T)
 rm(hab.3)
@@ -58,8 +60,10 @@ setwd(work)
 
 hab.4 <- raster(paste(getwd(), "Binary/bin_4.asc", sep="/"))
 hab.4 <- hab.4 + new.hab.2
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+hab.4 <- reclass(hab.4, rcl.na)
 projection(hab.4) <- BNG
-hab.4 <- focal(hab.4, w=93, sum, na.rm=T, pad=T)
+hab.4 <- focal(hab.4, w=93, mean, na.rm=T, pad=T)
 setwd(output.1)
 writeRaster(hab.4, paste(paste(getwd(), "/run_", j, sep=""), "/hab_4.asc", sep=""), overwrite=T)
 rm(hab.4)
@@ -67,8 +71,10 @@ setwd(work)
 
 hab.2 <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"))
 hab.2 <- hab.2 - (new.hab.1 + new.hab.2)
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+hab.2 <- reclass(hab.2, rcl.na)
 projection(hab.2) <- BNG
-hab.2 <- focal(hab.2, w=93, sum, na.rm=T, pad=T)
+hab.2 <- focal(hab.2, w=93, mean, na.rm=T, pad=T)
 setwd(output.1)
 writeRaster(hab.2, paste(paste(getwd(), "/run_", j, sep=""), "/hab_2.asc", sep=""), overwrite=T)
 rm(hab.2)

@@ -7,7 +7,7 @@ for(j in 1:models){
 
 potential <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"),  proj4string="BNG")
 
-rcl <- matrix(c(0.8,1.2,0), nrow=1, ncol=3, byrow=T)
+rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
 rnd.pts <- randomPoints(potential, 10)
@@ -29,18 +29,22 @@ dir.create(paste(getwd(), "/Scenario_2/run_", j, sep=""))
 
 hab.2 <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"))
 hab.2 <- hab.2 + new.hab
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+hab.2 <- reclass(hab.2, rcl.na)
 projection(hab.2) <- BNG
-hab.2 <- focal(hab.2, w=93, sum, na.rm=T, pad=T)
-setwd(output.1)
+hab.2 <- focal(hab.2, w=93, mean, na.rm=T, pad=T)
+setwd(output.2)
 writeRaster(hab.2, paste(paste(getwd(), "/run_", j, sep=""), "/hab_2.asc", sep=""), overwrite=T)
 rm(hab.2)
 setwd(work)
 
 hab.3 <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"))
 hab.3 <- hab.3 - new.hab
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+hab.3 <- reclass(hab.3, rcl.na)
 projection(hab.3) <- BNG
-hab.3 <- focal(hab.3, w=93, sum, na.rm=T, pad=T)
-setwd(output.7)
+hab.3 <- focal(hab.3, w=93, mean, na.rm=T, pad=T)
+setwd(output.2)
 writeRaster(hab.3, paste(paste(getwd(), "/run_", j, sep=""), "/hab_3.asc", sep=""), overwrite=T)
 rm(hab.3)
 setwd(work)
