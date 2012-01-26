@@ -10,7 +10,7 @@ potential <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"),  proj4string="B
 rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
-rnd.pts <- randomPoints(potential, 10)
+rnd.pts <- randomPoints(potential.0, 10)
 rnd.pts <- as.data.frame(rnd.pts)
 potential.pts <- rasterize(rnd.pts, potential, background=0)
 potential.pts <- potential.0 + potential.pts
@@ -30,7 +30,7 @@ potential <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"),  proj4string="B
 rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
-rnd.pts <- randomPoints(potential, 10)
+rnd.pts <- randomPoints(potential.0, 10)
 rnd.pts <- as.data.frame(rnd.pts)
 potential.pts <- rasterize(rnd.pts, potential, background=0)
 potential.pts <- potential.0 + potential.pts
@@ -47,9 +47,12 @@ for(i in 1:iterations){
 
 dir.create(paste(getwd(), "/Scenario_7/run_", j, sep=""))
 
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+new.hab.1 <- reclass(new.hab.1, rcl.na)
+new.hab.2 <- reclass(new.hab.2, rcl.na)
+
 hab.2 <- raster(paste(getwd(), "Binary/bin_2.asc", sep="/"))
 hab.2 <- hab.2 - new.hab.1
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.2 <- reclass(hab.2, rcl.na)
 projection(hab.2) <- BNG
 hab.2 <- focal(hab.2, w=93, mean, na.rm=T, pad=T)
@@ -60,7 +63,6 @@ setwd(work)
 
 hab.3 <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"))
 hab.3 <- hab.3 - new.hab.2
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.3 <- reclass(hab.3, rcl.na)
 projection(hab.3) <- BNG
 hab.3 <- focal(hab.3, w=93, mean, na.rm=T, pad=T)
@@ -71,7 +73,6 @@ setwd(work)
 
 hab.4 <- raster(paste(getwd(), "Binary/bin_4.asc", sep="/"))
 hab.4 <- hab.4 + new.hab.1 + new.hab.2
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.4 <- reclass(hab.4, rcl.na)
 projection(hab.4) <- BNG
 hab.4 <- focal(hab.4, w=93, mean, na.rm=T, pad=T)

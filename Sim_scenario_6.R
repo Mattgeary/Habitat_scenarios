@@ -1,21 +1,6 @@
 gc()
 output.6 <- paste(getwd(), "Scenario_6", sep="/")
 
-#for(j in 1:models){
-
-# Read in potential area layer
-
-#potential <- raster(paste(getwd(), "Potential/Scenario_6.asc", sep="/"),  crs=BNG)
-
-#rcl <- matrix(c(0.8,1.2,0), nrow=1, ncol=3, byrow=T)
-#potential.0 <- reclass(potential, rcl)
-
-#rnd.pts <- randomPoints(potential, n.points)
-#rnd.pts <- as.data.frame(rnd.pts)
-#potential.pts <- rasterize(rnd.pts, potential, background=0)
-#potential.pts <- potential.0 + potential.ptsgc()
-#output.6 <- paste(getwd(), "Scenario_6", sep="/")
-
 for(j in 1:models){
 
 # Read in potential area layer
@@ -25,7 +10,7 @@ potential <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"),  crs=BNG)
 rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
-rnd.pts <- randomPoints(potential, 10)
+rnd.pts <- randomPoints(potential.0, 10)
 rnd.pts <- as.data.frame(rnd.pts)
 potential.pts <- rasterize(rnd.pts, potential, background=0)
 potential.pts <- potential.0 + potential.pts
@@ -45,7 +30,7 @@ potential <- raster(paste(getwd(), "Binary/bin_4.asc", sep="/"),  crs=BNG)
 rcl <- matrix(c(-1,0.7,NA,0.8,1.2,0), nrow=2, ncol=3, byrow=T)
 potential.0 <- reclass(potential, rcl)
 
-rnd.pts <- randomPoints(potential, 10)
+rnd.pts <- randomPoints(potential.0, 10)
 rnd.pts <- as.data.frame(rnd.pts)
 potential.pts <- rasterize(rnd.pts, potential, background=0)
 potential.pts <- potential.0 + potential.pts
@@ -62,9 +47,12 @@ for(i in 1:iterations){
 
 dir.create(paste(getwd(), "/Scenario_6/run_", j, sep=""))
 
+rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
+new.hab.1 <- reclass(new.hab.1, rcl.na)
+new.hab.2 <- reclass(new.hab.2, rcl.na)
+
 hab.3 <- raster(paste(getwd(), "Binary/bin_3.asc", sep="/"))
 hab.3 <- hab.3 - new.hab.1
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.3 <- reclass(hab.3, rcl.na)
 projection(hab.3) <- BNG
 hab.3 <- focal(hab.3, w=93, mean, na.rm=T, pad=T)
@@ -75,7 +63,6 @@ setwd(work)
 
 hab.4 <- raster(paste(getwd(), "Binary/bin_4.asc", sep="/"))
 hab.4 <- hab.4 - new.hab.2
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.4 <- reclass(hab.4, rcl.na)
 projection(hab.4) <- BNG
 hab.4 <- focal(hab.4, w=93, mean, na.rm=T, pad=T)
@@ -86,7 +73,6 @@ setwd(work)
 
 hab.5 <- raster(paste(getwd(), "Binary/bin_5.asc", sep="/"))
 hab.5 <- hab.5 + new.hab.1 + new.hab.2
-rcl.na <- matrix(c(NA, NA, 0), nrow=1, ncol=3, byrow=T)
 hab.5 <- reclass(hab.5, rcl.na)
 projection(hab.5) <- BNG
 hab.5 <- focal(hab.5, w=93, mean, na.rm=T, pad=T)
